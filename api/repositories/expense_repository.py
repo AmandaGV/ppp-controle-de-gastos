@@ -9,7 +9,7 @@ import openpyxl
 from openpyxl.cell.cell import Cell
 from openpyxl.worksheet.worksheet import Worksheet
 
-from src import config
+from api import config
 
 
 class ExpenseRepository:

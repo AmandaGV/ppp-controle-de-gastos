@@ -1,8 +1,10 @@
-"""View de CRUD de Meios de Pagamento."""
+"""View de CRUD de Meios de Pagamento. Toda leitura/escrita passa pelo
+cliente HTTP (ctx.payment_method_client)."""
 import streamlit as st
 
-from src.ui.dependencies import AppContext
-from src.ui.views import dashboard_view
+from ui.api_client import ApiConnectionError, ApiError
+from ui.dependencies import AppContext
+from ui.views import dashboard_view
 
 
 def render(ctx: AppContext) -> None:
@@ -22,7 +24,10 @@ def render(ctx: AppContext) -> None:
 
     st.divider()
     st.subheader("Catálogo atual")
-    st.write(ctx.payment_method_controller.listar())
+    try:
+        st.write(ctx.payment_method_client.listar())
+    except (ApiError, ApiConnectionError) as erro:
+        st.error(str(erro))
 
 
 def _render_cadastrar(ctx: AppContext) -> None:
@@ -32,10 +37,10 @@ def _render_cadastrar(ctx: AppContext) -> None:
 
     if enviado:
         try:
-            ctx.payment_method_controller.cadastrar(nome)
+            ctx.payment_method_client.cadastrar(nome)
             st.success(f"Meio de pagamento '{nome.strip()}' cadastrado.")
             dashboard_view.render_table(ctx)
-        except ValueError as erro:
+        except (ApiError, ApiConnectionError) as erro:
             st.error(str(erro))
 
 
@@ -43,17 +48,22 @@ def _render_buscar(ctx: AppContext) -> None:
     nome = st.text_input("Buscar por nome", key="busca_meio_pagamento")
     if st.button("Buscar", key="btn_buscar_meio_pagamento"):
         try:
-            encontrado = ctx.payment_method_controller.buscar(nome)
+            encontrado = ctx.payment_method_client.buscar(nome)
             if encontrado:
                 st.info(f"Encontrado: {encontrado}")
             else:
                 st.warning("Nenhum meio de pagamento com esse nome.")
-        except ValueError as erro:
+        except (ApiError, ApiConnectionError) as erro:
             st.error(str(erro))
 
 
 def _render_atualizar(ctx: AppContext) -> None:
-    meios = ctx.payment_method_controller.listar()
+    try:
+        meios = ctx.payment_method_client.listar()
+    except (ApiError, ApiConnectionError) as erro:
+        st.error(str(erro))
+        return
+
     if not meios:
         st.info("Nenhum meio de pagamento cadastrado ainda.")
         return
@@ -65,15 +75,20 @@ def _render_atualizar(ctx: AppContext) -> None:
 
     if enviado:
         try:
-            ctx.payment_method_controller.atualizar(nome_atual, novo_nome)
+            ctx.payment_method_client.atualizar(nome_atual, novo_nome)
             st.success(f"'{nome_atual}' renomeado para '{novo_nome.strip()}'.")
             dashboard_view.render_table(ctx)
-        except ValueError as erro:
+        except (ApiError, ApiConnectionError) as erro:
             st.error(str(erro))
 
 
 def _render_excluir(ctx: AppContext) -> None:
-    meios = ctx.payment_method_controller.listar()
+    try:
+        meios = ctx.payment_method_client.listar()
+    except (ApiError, ApiConnectionError) as erro:
+        st.error(str(erro))
+        return
+
     if not meios:
         st.info("Nenhum meio de pagamento cadastrado ainda.")
         return
@@ -81,8 +96,8 @@ def _render_excluir(ctx: AppContext) -> None:
     nome = st.selectbox("Meio de pagamento a excluir", meios, key="excluir_meio_pagamento")
     if st.button("Excluir", type="primary", key="btn_excluir_meio_pagamento"):
         try:
-            ctx.payment_method_controller.excluir(nome)
+            ctx.payment_method_client.excluir(nome)
             st.success(f"'{nome}' excluído do catálogo.")
             dashboard_view.render_table(ctx)
-        except ValueError as erro:
+        except (ApiError, ApiConnectionError) as erro:
             st.error(str(erro))

@@ -2,7 +2,7 @@ from datetime import date
 
 import pytest
 
-from src.models.expense import Expense
+from api.models.expense import Expense
 
 
 def test_catalogo_e_seedado_com_padroes_no_primeiro_uso(payment_method_service):

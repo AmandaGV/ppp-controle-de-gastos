@@ -1,11 +1,17 @@
-"""View responsável por exibir o estado atual da planilha (DataFrame)."""
+"""View responsável por exibir o estado atual da planilha (DataFrame),
+obtido via GET /despesas/planilha na API."""
 import streamlit as st
 
-from src.ui.dependencies import AppContext
+from ui.api_client import ApiConnectionError, ApiError
+from ui.dependencies import AppContext
 
 
 def render_table(ctx: AppContext) -> None:
-    df = ctx.expense_controller.obter_dataframe()
+    try:
+        df = ctx.expense_client.obter_dataframe()
+    except (ApiError, ApiConnectionError) as erro:
+        st.error(str(erro))
+        return
     st.dataframe(df.round(2), width="stretch")
 
 

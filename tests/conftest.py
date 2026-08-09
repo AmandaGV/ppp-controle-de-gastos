@@ -3,12 +3,12 @@ from datetime import date
 
 import pytest
 
-from src import config
-from src.repositories.expense_repository import ExpenseRepository
-from src.services.expense_service import ExpenseService
-from src.services.income_service import IncomeService
-from src.services.layout_service import SheetLayoutService
-from src.services.payment_method_service import PaymentMethodService
+from api import config
+from api.repositories.expense_repository import ExpenseRepository
+from api.services.expense_service import ExpenseService
+from api.services.income_service import IncomeService
+from api.services.layout_service import SheetLayoutService
+from api.services.payment_method_service import PaymentMethodService
 
 
 @pytest.fixture

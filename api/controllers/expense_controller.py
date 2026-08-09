@@ -5,8 +5,8 @@ from datetime import date
 
 import pandas as pd
 
-from src.models.expense import Expense, ExpenseCell
-from src.services.expense_service import ExpenseService
+from api.models.expense import Expense, ExpenseCell
+from api.services.expense_service import ExpenseService
 
 
 class ExpenseController:

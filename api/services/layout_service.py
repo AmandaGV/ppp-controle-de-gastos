@@ -7,8 +7,8 @@ sejam inseridas ou reordenadas na planilha original.
 from dataclasses import dataclass, field
 from datetime import date, datetime
 
-from src import config
-from src.repositories.expense_repository import ExpenseRepository
+from api import config
+from api.repositories.expense_repository import ExpenseRepository
 
 
 @dataclass(frozen=True)
