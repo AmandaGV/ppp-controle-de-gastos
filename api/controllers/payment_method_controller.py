@@ -1,6 +1,6 @@
 """Controller de Meios de Pagamento: valida entradas e aciona o
 PaymentMethodService."""
-from src.services.payment_method_service import PaymentMethodService
+from api.services.payment_method_service import PaymentMethodService
 
 
 class PaymentMethodController:

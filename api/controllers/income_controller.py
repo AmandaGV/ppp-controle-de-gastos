@@ -1,7 +1,7 @@
 """Controller de Renda Mensal e Resultado Operacional."""
 from datetime import date
 
-from src.services.income_service import IncomeService
+from api.services.income_service import IncomeService
 
 
 class IncomeController:

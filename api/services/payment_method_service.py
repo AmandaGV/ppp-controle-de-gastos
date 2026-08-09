@@ -8,9 +8,9 @@ Renomear um meio de pagamento propaga a alteração para as células já
 lançadas na planilha de despesas, preservando os demais meios concatenados
 na mesma célula.
 """
-from src import config
-from src.repositories.expense_repository import ExpenseRepository
-from src.services.layout_service import SheetLayoutService
+from api import config
+from api.repositories.expense_repository import ExpenseRepository
+from api.services.layout_service import SheetLayoutService
 
 _HEADER = "Nome"
 _SEED_PADRAO = ["Cartão de Crédito", "Cartão de Débito", "Pix", "Dinheiro", "Boleto"]

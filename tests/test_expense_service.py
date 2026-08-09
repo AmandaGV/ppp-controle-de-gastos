@@ -1,6 +1,6 @@
 from datetime import date
 
-from src.models.expense import Expense
+from api.models.expense import Expense
 
 
 def _despesa(valor, meio_pagamento, data=date(2026, 6, 15)):
