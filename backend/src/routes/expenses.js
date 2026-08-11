@@ -33,6 +33,72 @@ router.get('/', getExpense);
 
 /**
  * @openapi
+ * /despesas/categorias:
+ *   get:
+ *     summary: Lista categorias disponíveis.
+ *     responses:
+ *       200:
+ *         description: Lista de categorias.
+ */
+router.get('/categorias', async (req, res) => {
+	try {
+		const Layout = require('../services/layoutService');
+		const layout = new Layout(require('../dependencies').excelRepository);
+		const cats = await layout.listCategories();
+		res.json(cats);
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+});
+
+/**
+ * @openapi
+ * /despesas/categorias/{categoria}/subcategorias:
+ *   get:
+ *     summary: Lista subcategorias de uma categoria.
+ *     parameters:
+ *       - in: path
+ *         name: categoria
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista de subcategorias.
+ */
+router.get('/categorias/:categoria/subcategorias', async (req, res) => {
+	try {
+		const Layout = require('../services/layoutService');
+		const layout = new Layout(require('../dependencies').excelRepository);
+		const subs = await layout.listSubcategories(req.params.categoria);
+		res.json(subs);
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+});
+
+/**
+ * @openapi
+ * /despesas/meses:
+ *   get:
+ *     summary: Lista meses/anos disponíveis na planilha.
+ *     responses:
+ *       200:
+ *         description: Lista de meses.
+ */
+router.get('/meses', async (req, res) => {
+	try {
+		const Layout = require('../services/layoutService');
+		const layout = new Layout(require('../dependencies').excelRepository);
+		const months = await layout.listMonths();
+		res.json(months);
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+});
+
+/**
+ * @openapi
  * /despesas:
  *   post:
  *     summary: Adiciona uma nova despesa.

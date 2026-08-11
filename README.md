@@ -133,61 +133,28 @@ valores negativos, campos vazios) é feita pelos schemas Pydantic em
 A documentação completa e interativa (Swagger) fica disponível em
 `http://localhost:8000/docs` com a API em execução.
 
-## Configuração do ambiente no VS Code
+## Requisitos e execução
 
-1. Instale o [Python 3.12+](https://www.python.org/downloads/) (marque a
-   opção "Add to PATH" no instalador do Windows).
-2. Abra a pasta do projeto no VS Code e, no terminal integrado, crie um
-   ambiente virtual:
+Pré-requisitos:
 
-   ```bash
-   python -m venv .venv
-   ```
+- Node.js 18+ instalado
 
-3. Ative o ambiente virtual:
-
-   - Windows (PowerShell): `.venv\Scripts\Activate.ps1`
-   - Windows (cmd): `.venv\Scripts\activate.bat`
-   - Git Bash / Linux / macOS: `source .venv/Scripts/activate` (Windows) ou
-     `source .venv/bin/activate` (Linux/macOS)
-
-4. Instale as dependências:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. No VS Code, selecione o interpretador Python do `.venv` (Ctrl+Shift+P →
-   "Python: Select Interpreter").
-
-## Como executar (dois processos)
-
-A API e a UI rodam em **processos separados**. Abra dois terminais
-integrados no VS Code (ícone de `+`/"Split Terminal") e ative o `.venv` em
-cada um.
-
-**Terminal 1 — API (FastAPI/uvicorn):**
+Instalação e execução do backend:
 
 ```bash
-uvicorn api.main:app --reload --port 8000
+cd backend
+npm install
+npm start
 ```
 
-A API sobe em `http://localhost:8000`, com Swagger em
-`http://localhost:8000/docs`.
+A API será iniciada em `http://localhost:3000/api` e o Swagger em
+`http://localhost:3000/api/docs`.
 
-**Terminal 2 — Interface (Streamlit):**
+Executando a interface (frontend estático):
 
-```bash
-streamlit run app.py
-```
-
-O navegador abrirá automaticamente em `http://localhost:8501`. Use o menu
-lateral para navegar entre **Despesas**, **Meios de Pagamento**,
-**Renda e Resultado** e **Planilha Completa**.
-
-> Inicie sempre a API primeiro. Se a UI não conseguir se conectar, uma
-> mensagem de erro é exibida na tela indicando que o servidor uvicorn
-> precisa estar em execução.
+Abra `frontend/index.html` no navegador ou sirva a pasta com um servidor
+estático (ex.: `npx serve frontend`). A interface consome a API em
+`http://localhost:3000/api` por padrão.
 
 ### Variáveis de ambiente
 

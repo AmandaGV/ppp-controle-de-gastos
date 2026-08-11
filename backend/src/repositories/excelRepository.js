@@ -22,12 +22,18 @@ class ExcelRepository {
   async getSheet(name) {
     const workbook = await this.loadWorkbook();
     if (name) {
-      const sheet = workbook.getWorksheet(name);
-      if (sheet) {
-        return sheet;
-      }
+      const sheet = workbook.getWorksheet(name) || workbook.getWorksheet(String(name).trim());
+      if (sheet) return sheet;
     }
 
+    // Try to detect the main sheet by common Portuguese names
+    const candidates = ['Pessoa Física', 'Pessoa Fisica', 'Pessoa', 'Pessoa Física '];
+    for (const candidate of candidates) {
+      const s = workbook.getWorksheet(candidate);
+      if (s) return s;
+    }
+
+    // fallback to first worksheet
     return workbook.worksheets[0];
   }
 
