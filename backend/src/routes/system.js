@@ -1,5 +1,5 @@
 const express = require('express');
-const { reloadWorkbook, getConsolidatedSheet } = require('../controllers/systemController');
+const { reloadWorkbook, initWorkbook, getConsolidatedSheet } = require('../controllers/systemController');
 
 const router = express.Router();
 
@@ -13,6 +13,17 @@ const router = express.Router();
  *         description: Arquivo recarregado.
  */
 router.post('/reload', reloadWorkbook);
+
+/**
+ * @openapi
+ * /sistema/init:
+ *   post:
+ *     summary: Inicializa ou recria a planilha de controle no disco.
+ *     responses:
+ *       200:
+ *         description: Planilha inicializada ou recriada.
+ */
+router.post('/init', initWorkbook);
 
 /**
  * @openapi

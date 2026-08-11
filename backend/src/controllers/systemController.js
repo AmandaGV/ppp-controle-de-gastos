@@ -9,6 +9,15 @@ async function reloadWorkbook(req, res) {
   }
 }
 
+async function initWorkbook(req, res) {
+  try {
+    await excelRepository.reloadWorkbook();
+    res.json({ message: 'Workbook inicializado com sucesso.', path: excelRepository.filePath });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+}
+
 async function getConsolidatedSheet(req, res) {
   try {
     const Layout = require('../services/layoutService');
@@ -50,4 +59,4 @@ async function getConsolidatedSheet(req, res) {
   }
 }
 
-module.exports = { reloadWorkbook, getConsolidatedSheet };
+module.exports = { reloadWorkbook, initWorkbook, getConsolidatedSheet };

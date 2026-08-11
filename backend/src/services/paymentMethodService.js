@@ -1,17 +1,13 @@
 class PaymentMethodService {
   constructor(excelRepository) {
     this.excelRepository = excelRepository;
+    const LayoutService = require('./layoutService');
+    this.layoutService = new LayoutService(excelRepository);
   }
 
   async getSheet() {
-    const workbook = await this.excelRepository.loadWorkbook();
-    let sheet = workbook.getWorksheet('Meios de Pagamento');
-    if (!sheet) {
-      sheet = workbook.addWorksheet('Meios de Pagamento');
-      sheet.getRow(1).getCell(1).value = 'Nome';
-      await this.excelRepository.saveWorkbook();
-    }
-    return sheet;
+    // delegate creation and retrieval to layoutService so logic stays centralized
+    return this.layoutService.findPaymentMethodsSheet();
   }
 
   async listMethods() {
@@ -50,7 +46,7 @@ class PaymentMethodService {
 
     const sheet = await this.getSheet();
     const workbook = await this.excelRepository.loadWorkbook();
-    const mainSheet = workbook.worksheets[0];
+    const mainSheet = await this.excelRepository.getSheet();
     const currentLower = String(currentName).trim().toLowerCase();
     const newTrimmed = String(newName).trim();
     let updated = false;
