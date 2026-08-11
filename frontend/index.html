@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Controle de Gastos Pessoais</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f7fb; color: #111; }
+    .container { max-width: 1000px; margin: 40px auto; padding: 20px; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.08); border-radius: 12px; }
+    h1, h2 { margin-top: 0; }
+    .field { margin-bottom: 14px; }
+    label { display: block; font-weight: bold; margin-bottom: 6px; }
+    input, select, button { width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; }
+    button { background: #2563eb; color: white; border: none; cursor: pointer; }
+    button:hover { background: #1d4ed8; }
+    .grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); }
+    .card { padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px; background: #f8fafc; }
+    pre { white-space: pre-wrap; word-break: break-word; max-height: 450px; overflow: auto; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Controle de Gastos Pessoais</h1>
+    <div class="grid">
+      <div class="card">
+        <h2>Adicionar despesa</h2>
+        <div class="field"><label>Categoria</label><input id="expenseCategory" /></div>
+        <div class="field"><label>Subcategoria</label><input id="expenseSubcategory" /></div>
+        <div class="field"><label>Ano</label><input id="expenseYear" type="number" value="2026" /></div>
+        <div class="field"><label>Mês</label><input id="expenseMonth" type="number" min="1" max="12" value="1" /></div>
+        <div class="field"><label>Valor</label><input id="expenseValue" type="number" step="0.01" /></div>
+        <div class="field"><label>Meio de pagamento</label><input id="expensePayment" /></div>
+        <button id="addExpenseButton">Cadastrar despesa</button>
+      </div>
+      <div class="card">
+        <h2>Atualizar renda mensal</h2>
+        <div class="field"><label>Ano</label><input id="balanceYear" type="number" value="2026" /></div>
+        <div class="field"><label>Mês</label><input id="balanceMonth" type="number" min="1" max="12" value="1" /></div>
+        <div class="field"><label>Renda Mensal</label><input id="balanceValue" type="number" step="0.01" /></div>
+        <button id="updateBalanceButton">Atualizar renda</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Consultar balanço mensal</h2>
+      <div class="field"><label>Ano</label><input id="queryBalanceYear" type="number" value="2026" /></div>
+      <div class="field"><label>Mês</label><input id="queryBalanceMonth" type="number" min="1" max="12" value="1" /></div>
+      <button id="queryBalanceButton">Buscar balanço</button>
+      <pre id="balanceResult">Resultado do balanço aparecerá aqui...</pre>
+    </div>
+
+    <div class="card">
+      <h2>Resposta da API</h2>
+      <pre id="apiResult">Use os formulários acima para testar a API.</pre>
+    </div>
+  </div>
+
+  <script>
+    const baseUrl = 'http://localhost:3000/api';
+    const apiResult = document.getElementById('apiResult');
+    const balanceResult = document.getElementById('balanceResult');
+
+    function handleResponse(data) {
+      apiResult.textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function request(url, options) {
+      const response = await fetch(url, options);
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Erro desconhecido');
+      return data;
+    }
+
+    document.getElementById('addExpenseButton').addEventListener('click', async () => {
+      try {
+        const payload = {
+          category: document.getElementById('expenseCategory').value,
+          subcategory: document.getElementById('expenseSubcategory').value,
+          year: Number(document.getElementById('expenseYear').value),
+          month: Number(document.getElementById('expenseMonth').value),
+          value: Number(document.getElementById('expenseValue').value),
+          paymentMethod: document.getElementById('expensePayment').value,
+        };
+        const data = await request(`${baseUrl}/despesas`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        handleResponse(data);
+      } catch (error) {
+        apiResult.textContent = error.message;
+      }
+    });
+
+    document.getElementById('updateBalanceButton').addEventListener('click', async () => {
+      try {
+        const year = Number(document.getElementById('balanceYear').value);
+        const month = Number(document.getElementById('balanceMonth').value);
+        const rendaMensal = Number(document.getElementById('balanceValue').value);
+        const data = await request(`${baseUrl}/renda?year=${year}&month=${month}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rendaMensal }),
+        });
+        handleResponse(data);
+      } catch (error) {
+        apiResult.textContent = error.message;
+      }
+    });
+
+    document.getElementById('queryBalanceButton').addEventListener('click', async () => {
+      try {
+        const year = Number(document.getElementById('queryBalanceYear').value);
+        const month = Number(document.getElementById('queryBalanceMonth').value);
+        const data = await request(`${baseUrl}/renda?year=${year}&month=${month}`);
+        balanceResult.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        balanceResult.textContent = error.message;
+      }
+    });
+  </script>
+</body>
+</html>
