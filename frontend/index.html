@@ -24,10 +24,10 @@
     <div class="grid">
       <div class="card">
         <h2>Adicionar despesa</h2>
-        <div class="field"><label>Categoria</label><input id="expenseCategory" /></div>
-        <div class="field"><label>Subcategoria</label><input id="expenseSubcategory" /></div>
+        <div class="field"><label>Categoria</label><select id="expenseCategory"></select></div>
+        <div class="field"><label>Subcategoria</label><select id="expenseSubcategory"></select></div>
         <div class="field"><label>Ano</label><input id="expenseYear" type="number" value="2026" /></div>
-        <div class="field"><label>Mês</label><input id="expenseMonth" type="number" min="1" max="12" value="1" /></div>
+        <div class="field"><label>Mês</label><select id="expenseMonth"></select></div>
         <div class="field"><label>Valor</label><input id="expenseValue" type="number" step="0.01" /></div>
         <div class="field"><label>Meio de pagamento</label><input id="expensePayment" /></div>
         <button id="addExpenseButton">Cadastrar despesa</button>
@@ -60,8 +60,8 @@
     const apiResult = document.getElementById('apiResult');
     const balanceResult = document.getElementById('balanceResult');
 
-    function handleResponse(data) {
-      apiResult.textContent = JSON.stringify(data, null, 2);
+    function renderJSON(el, data) {
+      el.textContent = JSON.stringify(data, null, 2);
     }
 
     async function request(url, options) {
@@ -70,6 +70,55 @@
       if (!response.ok) throw new Error(data.message || 'Erro desconhecido');
       return data;
     }
+
+    async function loadMetadata() {
+      try {
+        const months = await request(`${baseUrl}/despesas/meses`);
+        const cats = await request(`${baseUrl}/despesas/categorias`);
+
+        const monthSelect = document.getElementById('expenseMonth');
+        monthSelect.innerHTML = '';
+        months.forEach((m) => {
+          const opt = document.createElement('option');
+          opt.value = m.month;
+          opt.textContent = m.label;
+          monthSelect.appendChild(opt);
+        });
+
+        const catSelect = document.getElementById('expenseCategory');
+        catSelect.innerHTML = '';
+        cats.forEach((c) => {
+          const opt = document.createElement('option');
+          opt.value = c;
+          opt.textContent = c;
+          catSelect.appendChild(opt);
+        });
+
+        if (cats.length) loadSubcategories(cats[0]);
+      } catch (err) {
+        apiResult.textContent = err.message;
+      }
+    }
+
+    async function loadSubcategories(category) {
+      try {
+        const subs = await request(`${baseUrl}/despesas/categorias/${encodeURIComponent(category)}/subcategorias`);
+        const subSelect = document.getElementById('expenseSubcategory');
+        subSelect.innerHTML = '';
+        subs.forEach((s) => {
+          const opt = document.createElement('option');
+          opt.value = s;
+          opt.textContent = s;
+          subSelect.appendChild(opt);
+        });
+      } catch (err) {
+        apiResult.textContent = err.message;
+      }
+    }
+
+    document.getElementById('expenseCategory').addEventListener('change', (e) => {
+      loadSubcategories(e.target.value);
+    });
 
     document.getElementById('addExpenseButton').addEventListener('click', async () => {
       try {
@@ -86,7 +135,10 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         });
-        handleResponse(data);
+        renderJSON(apiResult, data);
+        // refresh balance view
+        const balance = await request(`${baseUrl}/renda?year=${payload.year}&month=${payload.month}`);
+        renderJSON(balanceResult, balance);
       } catch (error) {
         apiResult.textContent = error.message;
       }
@@ -102,7 +154,7 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ rendaMensal }),
         });
-        handleResponse(data);
+        renderJSON(apiResult, data);
       } catch (error) {
         apiResult.textContent = error.message;
       }
@@ -113,11 +165,14 @@
         const year = Number(document.getElementById('queryBalanceYear').value);
         const month = Number(document.getElementById('queryBalanceMonth').value);
         const data = await request(`${baseUrl}/renda?year=${year}&month=${month}`);
-        balanceResult.textContent = JSON.stringify(data, null, 2);
+        renderJSON(balanceResult, data);
       } catch (error) {
         balanceResult.textContent = error.message;
       }
     });
+
+    // load categories and months on start
+    loadMetadata();
   </script>
 </body>
 </html>

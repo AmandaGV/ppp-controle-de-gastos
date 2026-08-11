@@ -78,6 +78,61 @@ class LayoutService {
     }
     return sheet;
   }
+
+  async listCategories() {
+    const sheet = await this.excelRepository.getSheet();
+    const categories = new Set();
+    for (let r = 1; r <= sheet.rowCount; r += 1) {
+      const cell = sheet.getRow(r).getCell(1).value;
+      if (cell && String(cell).trim()) categories.add(String(cell).trim());
+    }
+    return Array.from(categories).filter(Boolean);
+  }
+
+  async listSubcategories(category) {
+    const sheet = await this.excelRepository.getSheet();
+    const subs = new Set();
+    const normalizedCategory = this.normalize(category);
+    for (let r = 1; r <= sheet.rowCount; r += 1) {
+      const row = sheet.getRow(r);
+      const first = this.normalize(row.getCell(1).value);
+      const second = row.getCell(2).value;
+      if (first === normalizedCategory && second && String(second).trim()) {
+        subs.add(String(second).trim());
+      }
+    }
+    return Array.from(subs).filter(Boolean);
+  }
+
+  async listMonths() {
+    const sheet = await this.excelRepository.getSheet();
+    const header = sheet.getRow(1);
+    const months = [];
+    const regex1 = /\d{2}\/\d{4}/; // 01/2026
+    const regex2 = /\d{4}-\d{2}/; // 2026-01
+    for (let col = 1; col <= sheet.columnCount; col += 1) {
+      const cell = header.getCell(col).value;
+      if (!cell || typeof cell !== 'string') continue;
+      const txt = cell.trim();
+      const match = txt.match(regex1) || txt.match(regex2);
+      if (match) {
+        const label = match[0];
+        let year = null;
+        let month = null;
+        if (regex1.test(label)) {
+          const parts = label.split('/');
+          month = Number(parts[0]);
+          year = Number(parts[1]);
+        } else if (regex2.test(label)) {
+          const parts = label.split('-');
+          year = Number(parts[0]);
+          month = Number(parts[1]);
+        }
+        months.push({ label, year, month, valueColumn: col, paymentColumn: col + 1 });
+      }
+    }
+    return months;
+  }
 }
 
 module.exports = LayoutService;
