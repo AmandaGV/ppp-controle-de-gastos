@@ -4,3 +4,7 @@ __pycache__/
 .pytest_cache/
 .streamlit/
 .claude/
+
+# Node.js
+backend/node_modules/
+frontend/node_modules/

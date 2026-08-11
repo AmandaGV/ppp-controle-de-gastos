@@ -1,41 +1,43 @@
 # Controle de Gastos Pessoais
 
-Sistema de Controle de Gastos Pessoais criado como projeto de portfólio pessoal
-da Mentoria 2.0 em Testes de Software. A aplicação lê, atualiza e exibe, em
-tempo real, o arquivo `PLANILHA CONTROLE DE GASTOS.xlsx` — sem exigir que o
-usuário abra o Excel.
+Sistema de Controle de Gastos Pessoais criado como projeto de portfólio pessoal.
+A aplicação utiliza uma API REST em Node.js para ler, atualizar e exibir o arquivo
+`PLANILHA CONTROLE DE GASTOS.xlsx`, sem exigir que o usuário abra o Excel.
 
-## Arquitetura desacoplada (API + UI)
+## Arquitetura desacoplada (Backend + Frontend)
 
-O sistema é dividido em dois processos independentes:
+O sistema foi organizado em duas camadas principais:
 
-- **`/api`** — API REST em [FastAPI](https://fastapi.tiangolo.com/). É a
-  **única** parte do sistema que acessa o arquivo `.xlsx` (leitura e
-  escrita). Expõe rotas para CRUD de Despesas, CRUD de Meios de Pagamento e
-  consulta do balanço mensal (Renda, Total de Despesas, Resultado
-  Operacional). Documentação interativa automática em `/docs` (Swagger).
-- **`/ui`** — Interface Streamlit. Não importa nenhum código da API nem
-  acessa a planilha diretamente: toda leitura e escrita acontece via
-  requisições HTTP (`requests`) para a API, através de `ui/api_client.py`.
+- **`backend/`** — API REST em Node.js com `Express`. É a única parte do sistema
+  que acessa o arquivo `.xlsx` e persiste as alterações no disco.
+- **`frontend/`** — Interface simples em HTML/Vanilla JS. Não acessa a planilha
+  diretamente; todas as operações são feitas via chamadas REST para a API.
 
 ```
-app.py                          # Launcher da UI Streamlit (streamlit run app.py)
-api/
-  main.py                       # Ponto de entrada da API (uvicorn api.main:app)
-  config.py                     # Caminhos e rótulos usados na localização dinâmica
-  models/                       # Expense, ExpenseCell, PaymentMethod (dataclasses)
-  repositories/                 # ExpenseRepository: único responsável por abrir/salvar o .xlsx
-  services/                     # Regras de negócio (soma, concatenação, recálculo, layout, CRUDs)
-  controllers/                  # Validação de entrada e orquestração entre rotas e services
-  schemas/                      # Schemas Pydantic (validação de payload de entrada/saída)
-  routers/                      # Rotas HTTP (despesas, meios-pagamento, renda, sistema)
-  dependencies.py               # Composition root da API (monta repositório + services + controllers)
-ui/
-  main.py                       # Layout e navegação Streamlit
-  api_client.py                 # Única camada da UI que fala HTTP com a API
-  dependencies.py               # Composition root da UI (monta os clientes HTTP)
-  views/                        # Telas Streamlit (despesas, meios de pagamento, renda, dashboard)
-tests/                          # Testes unitários de services + testes de fumaça da API
+backend/
+  package.json                  # Dependências e scripts do backend Node.js
+  src/
+    app.js                      # Ponto de entrada da API Express
+    dependencies.js             # Composição do repositório e serviços
+    repositories/
+      excelRepository.js        # Única camada que abre, lê e salva o .xlsx
+    services/
+      layoutService.js          # Localiza dinamicamente colunas e linhas na planilha
+      expenseService.js         # Regras de despesa, soma inteligente e concatenação
+      paymentMethodService.js   # CRUD de meios de pagamento no Excel
+      balanceService.js         # Lógica de balanço e atualização de totais
+    controllers/
+      expenseController.js      # Validação de requisições e formatação de respostas
+      paymentMethodController.js
+      balanceController.js
+      systemController.js
+    routes/
+      expenses.js
+      paymentMethods.js
+      balance.js
+      system.js
+frontend/
+  index.html                    # Interface estática que consome a API via fetch
 data/
   PLANILHA CONTROLE DE GASTOS.xlsx
 ```
