@@ -7,6 +7,8 @@ const router = express.Router();
  * @openapi
  * /despesas:
  *   get:
+ *     tags:
+ *       - Despesas
  *     summary: Busca uma despesa existente.
  *     parameters:
  *       - in: query
@@ -28,6 +30,33 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: Despesa encontrada.
+ *       400:
+ *         description: Requisição inválida.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Despesa não encontrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.get('/', getExpense);
 
@@ -35,10 +64,21 @@ router.get('/', getExpense);
  * @openapi
  * /despesas/categorias:
  *   get:
+ *     tags:
+ *       - Despesas
  *     summary: Lista categorias disponíveis.
  *     responses:
  *       200:
  *         description: Lista de categorias.
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.get('/categorias', async (req, res) => {
 	try {
@@ -55,6 +95,8 @@ router.get('/categorias', async (req, res) => {
  * @openapi
  * /despesas/categorias/{categoria}/subcategorias:
  *   get:
+ *     tags:
+ *       - Despesas
  *     summary: Lista subcategorias de uma categoria.
  *     parameters:
  *       - in: path
@@ -65,6 +107,24 @@ router.get('/categorias', async (req, res) => {
  *     responses:
  *       200:
  *         description: Lista de subcategorias.
+ *       404:
+ *         description: Categoria não encontrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.get('/categorias/:categoria/subcategorias', async (req, res) => {
 	try {
@@ -81,10 +141,21 @@ router.get('/categorias/:categoria/subcategorias', async (req, res) => {
  * @openapi
  * /despesas/meses:
  *   get:
+ *     tags:
+ *       - Despesas
  *     summary: Lista meses/anos disponíveis na planilha.
  *     responses:
  *       200:
  *         description: Lista de meses.
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.get('/meses', async (req, res) => {
 	try {
@@ -101,6 +172,8 @@ router.get('/meses', async (req, res) => {
  * @openapi
  * /despesas:
  *   post:
+ *     tags:
+ *       - Despesas
  *     summary: Adiciona uma nova despesa.
  *     requestBody:
  *       required: true
@@ -124,6 +197,24 @@ router.get('/meses', async (req, res) => {
  *     responses:
  *       201:
  *         description: Despesa adicionada.
+ *       400:
+ *         description: Requisição inválida.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.post('/', addExpense);
 
@@ -131,6 +222,8 @@ router.post('/', addExpense);
  * @openapi
  * /despesas:
  *   put:
+ *     tags:
+ *       - Despesas
  *     summary: Atualiza uma despesa existente.
  *     requestBody:
  *       required: true
@@ -154,6 +247,33 @@ router.post('/', addExpense);
  *     responses:
  *       200:
  *         description: Despesa atualizada.
+ *       400:
+ *         description: Requisição inválida.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Despesa não encontrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.put('/', updateExpense);
 
@@ -161,6 +281,8 @@ router.put('/', updateExpense);
  * @openapi
  * /despesas:
  *   delete:
+ *     tags:
+ *       - Despesas
  *     summary: Remove uma despesa.
  *     parameters:
  *       - in: query
@@ -182,6 +304,33 @@ router.put('/', updateExpense);
  *     responses:
  *       200:
  *         description: Despesa removida.
+ *       400:
+ *         description: Requisição inválida.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Despesa não encontrada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.delete('/', deleteExpense);
 

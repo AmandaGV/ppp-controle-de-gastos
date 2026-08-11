@@ -7,10 +7,21 @@ const router = express.Router();
  * @openapi
  * /meios-pagamento:
  *   get:
+ *     tags:
+ *       - Meios de Pagamento
  *     summary: Lista todos os meios de pagamento.
  *     responses:
  *       200:
  *         description: Lista de meios de pagamento.
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.get('/', listMethods);
 
@@ -18,6 +29,8 @@ router.get('/', listMethods);
  * @openapi
  * /meios-pagamento:
  *   post:
+ *     tags:
+ *       - Meios de Pagamento
  *     summary: Adiciona novo meio de pagamento.
  *     requestBody:
  *       required: true
@@ -31,6 +44,24 @@ router.get('/', listMethods);
  *     responses:
  *       201:
  *         description: Meio de pagamento adicionado.
+ *       400:
+ *         description: Requisição inválida.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.post('/', addMethod);
 
@@ -38,6 +69,8 @@ router.post('/', addMethod);
  * @openapi
  * /meios-pagamento/{name}:
  *   put:
+ *     tags:
+ *       - Meios de Pagamento
  *     summary: Renomeia meio de pagamento.
  *     parameters:
  *       - in: path
@@ -57,6 +90,33 @@ router.post('/', addMethod);
  *     responses:
  *       200:
  *         description: Meio de pagamento renomeado.
+ *       400:
+ *         description: Requisição inválida.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       404:
+ *         description: Meio de pagamento não encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.put('/:name', updateMethod);
 
@@ -64,6 +124,8 @@ router.put('/:name', updateMethod);
  * @openapi
  * /meios-pagamento/{name}:
  *   delete:
+ *     tags:
+ *       - Meios de Pagamento
  *     summary: Exclui um meio de pagamento.
  *     parameters:
  *       - in: path
@@ -74,6 +136,24 @@ router.put('/:name', updateMethod);
  *     responses:
  *       200:
  *         description: Meio de pagamento excluído.
+ *       404:
+ *         description: Meio de pagamento não encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Erro interno no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  */
 router.delete('/:name', deleteMethod);
 
