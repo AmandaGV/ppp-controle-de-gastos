@@ -13,6 +13,15 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: Lista de meios de pagamento.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   name:
+ *                     type: string
  *       500:
  *         description: Erro interno no servidor.
  *         content:
@@ -38,12 +47,23 @@ router.get('/', listMethods);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
  *             properties:
  *               name:
  *                 type: string
+ *                 description: Nome do meio de pagamento.
+ *                 example: Pix
  *     responses:
  *       201:
  *         description: Meio de pagamento adicionado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
  *       400:
  *         description: Requisição inválida.
  *         content:
@@ -53,6 +73,11 @@ router.get('/', listMethods);
  *               properties:
  *                 message:
  *                   type: string
+ *             examples:
+ *               missingName:
+ *                 summary: Campo obrigatório ausente.
+ *                 value:
+ *                   message: "O campo 'name' é obrigatório."
  *       500:
  *         description: Erro interno no servidor.
  *         content:
@@ -84,12 +109,23 @@ router.post('/', addMethod);
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - newName
  *             properties:
  *               newName:
  *                 type: string
+ *                 description: Novo nome do meio de pagamento.
+ *                 example: Cartão de débito
  *     responses:
  *       200:
  *         description: Meio de pagamento renomeado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 name:
+ *                   type: string
  *       400:
  *         description: Requisição inválida.
  *         content:
@@ -99,6 +135,11 @@ router.post('/', addMethod);
  *               properties:
  *                 message:
  *                   type: string
+ *             examples:
+ *               invalidPayload:
+ *                 summary: Campo obrigatorio ausente ou inválido.
+ *                 value:
+ *                   message: "O campo 'newName' é obrigatório."
  *       404:
  *         description: Meio de pagamento não encontrado.
  *         content:
@@ -136,6 +177,14 @@ router.put('/:name', updateMethod);
  *     responses:
  *       200:
  *         description: Meio de pagamento excluído.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Meio de pagamento excluído com sucesso."
  *       404:
  *         description: Meio de pagamento não encontrado.
  *         content:

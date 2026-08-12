@@ -13,6 +13,14 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: Arquivo recarregado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Workbook recarregado com sucesso."
  *       500:
  *         description: Erro interno no servidor.
  *         content:
@@ -35,6 +43,15 @@ router.post('/reload', reloadWorkbook);
  *     responses:
  *       200:
  *         description: Planilha inicializada ou recriada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 path:
+ *                   type: string
  *       500:
  *         description: Erro interno no servidor.
  *         content:
@@ -57,6 +74,56 @@ router.post('/init', initWorkbook);
  *     responses:
  *       200:
  *         description: Visualização consolidada da planilha.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 sheetName:
+ *                   type: string
+ *                 rowCount:
+ *                   type: integer
+ *                 columnCount:
+ *                   type: integer
+ *                 months:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       label:
+ *                         type: string
+ *                       valueColumn:
+ *                         type: integer
+ *                       paymentColumn:
+ *                         type: integer
+ *                 paymentMethods:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 rows:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       rowNumber:
+ *                         type: integer
+ *                       category:
+ *                         type: string
+ *                         nullable: true
+ *                       subcategory:
+ *                         type: string
+ *                         nullable: true
+ *                       cells:
+ *                         type: object
+ *                         additionalProperties:
+ *                           type: object
+ *                           properties:
+ *                             value:
+ *                               type: string
+ *                               nullable: true
+ *                             payment:
+ *                               type: string
+ *                               nullable: true
  *       500:
  *         description: Erro interno no servidor.
  *         content:

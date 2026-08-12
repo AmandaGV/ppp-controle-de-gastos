@@ -1,0 +1,1206 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "x",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/sistema/reload": {
+      "post": {
+        "tags": [
+          "Sistema"
+        ],
+        "summary": "Recarrega o arquivo Excel do disco.",
+        "responses": {
+          "200": {
+            "description": "Arquivo recarregado."
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sistema/init": {
+      "post": {
+        "tags": [
+          "Sistema"
+        ],
+        "summary": "Inicializa ou recria a planilha de controle no disco.",
+        "responses": {
+          "200": {
+            "description": "Planilha inicializada ou recriada."
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sistema/planilha": {
+      "get": {
+        "tags": [
+          "Sistema"
+        ],
+        "summary": "Retorna uma visualização consolidada da planilha (headers, meses, meios de pagamento e linhas).",
+        "responses": {
+          "200": {
+            "description": "Visualização consolidada da planilha."
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/meios-pagamento": {
+      "get": {
+        "tags": [
+          "Meios de Pagamento"
+        ],
+        "summary": "Lista todos os meios de pagamento.",
+        "responses": {
+          "200": {
+            "description": "Lista de meios de pagamento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Meios de Pagamento"
+        ],
+        "summary": "Adiciona novo meio de pagamento.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "name"
+                ],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Nome do meio de pagamento.",
+                    "example": "Pix"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Meio de pagamento adicionado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "missingName": {
+                    "summary": "Campo obrigatório ausente.",
+                    "value": {
+                      "message": "O campo 'name' é obrigatório."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/meios-pagamento/{name}": {
+      "put": {
+        "tags": [
+          "Meios de Pagamento"
+        ],
+        "summary": "Renomeia meio de pagamento.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "newName"
+                ],
+                "properties": {
+                  "newName": {
+                    "type": "string",
+                    "description": "Novo nome do meio de pagamento.",
+                    "example": "Cartão de débito"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Meio de pagamento renomeado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidPayload": {
+                    "summary": "Campo obrigatorio ausente ou inválido.",
+                    "value": {
+                      "message": "O campo 'newName' é obrigatório."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Meio de pagamento não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Meios de Pagamento"
+        ],
+        "summary": "Exclui um meio de pagamento.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Meio de pagamento excluído.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Meio de pagamento excluído com sucesso."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Meio de pagamento não encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/despesas": {
+      "get": {
+        "tags": [
+          "Despesas"
+        ],
+        "summary": "Busca uma despesa existente.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "category",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "subcategory",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "month",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Despesa encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "category": {
+                      "type": "string"
+                    },
+                    "subcategory": {
+                      "type": "string"
+                    },
+                    "year": {
+                      "type": "integer"
+                    },
+                    "month": {
+                      "type": "integer"
+                    },
+                    "value": {
+                      "type": "number"
+                    },
+                    "paymentMethod": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidQuery": {
+                    "summary": "Parâmetro query inválido ou ausente.",
+                    "value": {
+                      "message": "Os parâmetros 'category', 'subcategory', 'year' e 'month' são obrigatórios."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Despesa não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Despesas"
+        ],
+        "summary": "Adiciona uma nova despesa.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "category",
+                  "subcategory",
+                  "year",
+                  "month",
+                  "value"
+                ],
+                "properties": {
+                  "category": {
+                    "type": "string",
+                    "description": "Categoria da despesa.",
+                    "example": "Alimentação"
+                  },
+                  "subcategory": {
+                    "type": "string",
+                    "description": "Subcategoria detalhada.",
+                    "example": "Supermercado"
+                  },
+                  "year": {
+                    "type": "integer",
+                    "description": "Ano da despesa.",
+                    "example": 2025
+                  },
+                  "month": {
+                    "type": "integer",
+                    "description": "Mês da despesa (1-12).",
+                    "example": 4
+                  },
+                  "value": {
+                    "type": "number",
+                    "description": "Valor da despesa.",
+                    "example": 235.9
+                  },
+                  "paymentMethod": {
+                    "type": "string",
+                    "description": "Meio de pagamento utilizado.",
+                    "example": "Cartão de crédito"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Despesa adicionada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "category": {
+                      "type": "string"
+                    },
+                    "subcategory": {
+                      "type": "string"
+                    },
+                    "year": {
+                      "type": "integer"
+                    },
+                    "month": {
+                      "type": "integer"
+                    },
+                    "value": {
+                      "type": "number"
+                    },
+                    "paymentMethod": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "missingField": {
+                    "summary": "Campo obrigatório ausente.",
+                    "value": {
+                      "message": "O campo 'category' é obrigatório."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Despesas"
+        ],
+        "summary": "Atualiza uma despesa existente.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "category",
+                  "subcategory",
+                  "year",
+                  "month",
+                  "value"
+                ],
+                "properties": {
+                  "category": {
+                    "type": "string",
+                    "description": "Categoria da despesa.",
+                    "example": "Transporte"
+                  },
+                  "subcategory": {
+                    "type": "string",
+                    "description": "Subcategoria detalhada.",
+                    "example": "Uber"
+                  },
+                  "year": {
+                    "type": "integer",
+                    "description": "Ano da despesa.",
+                    "example": 2025
+                  },
+                  "month": {
+                    "type": "integer",
+                    "description": "Mês da despesa (1-12).",
+                    "example": 5
+                  },
+                  "value": {
+                    "type": "number",
+                    "description": "Novo valor da despesa.",
+                    "example": 78.5
+                  },
+                  "paymentMethod": {
+                    "type": "string",
+                    "description": "Novo meio de pagamento para a despesa.",
+                    "example": "Dinheiro"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Despesa atualizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "category": {
+                      "type": "string"
+                    },
+                    "subcategory": {
+                      "type": "string"
+                    },
+                    "year": {
+                      "type": "integer"
+                    },
+                    "month": {
+                      "type": "integer"
+                    },
+                    "value": {
+                      "type": "number"
+                    },
+                    "paymentMethod": {
+                      "type": "string",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidPayload": {
+                    "summary": "Tipo de dado incorreto.",
+                    "value": {
+                      "message": "O campo 'year' deve ser um número inteiro."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Despesa não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Despesas"
+        ],
+        "summary": "Remove uma despesa.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "category",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "subcategory",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "year",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "month",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Despesa removida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Despesa removida com sucesso."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidQuery": {
+                    "summary": "Parâmetro query inválido ou ausente.",
+                    "value": {
+                      "message": "Os parâmetros 'category', 'subcategory', 'year' e 'month' são obrigatórios."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Despesa não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/despesas/categorias": {
+      "get": {
+        "tags": [
+          "Despesas"
+        ],
+        "summary": "Lista categorias disponíveis.",
+        "responses": {
+          "200": {
+            "description": "Lista de categorias.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/despesas/categorias/{categoria}/subcategorias": {
+      "get": {
+        "tags": [
+          "Despesas"
+        ],
+        "summary": "Lista subcategorias de uma categoria.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "categoria",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de subcategorias."
+          },
+          "404": {
+            "description": "Categoria não encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/despesas/meses": {
+      "get": {
+        "tags": [
+          "Despesas"
+        ],
+        "summary": "Lista meses/anos disponíveis na planilha.",
+        "responses": {
+          "200": {
+            "description": "Lista de meses.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/renda": {
+      "get": {
+        "tags": [
+          "Renda"
+        ],
+        "summary": "Obtém o balanço mensal.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "month",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Balanço mensal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "year": {
+                      "type": "integer"
+                    },
+                    "month": {
+                      "type": "integer"
+                    },
+                    "rendaMensal": {
+                      "type": "number"
+                    },
+                    "totalDespesas": {
+                      "type": "number"
+                    },
+                    "resultadoOperacional": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Renda"
+        ],
+        "summary": "Atualiza a renda mensal.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "year",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "month",
+            "schema": {
+              "type": "integer"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "rendaMensal"
+                ],
+                "properties": {
+                  "rendaMensal": {
+                    "type": "number",
+                    "description": "Valor da renda mensal para o mês selecionado.",
+                    "example": 6500
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Renda atualizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "year": {
+                      "type": "integer"
+                    },
+                    "month": {
+                      "type": "integer"
+                    },
+                    "rendaMensal": {
+                      "type": "number"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "examples": {
+                  "invalidRequest": {
+                    "summary": "Renda mensal ausente ou mês inválido.",
+                    "value": {
+                      "message": "O campo 'rendaMensal' é obrigatório e deve ser um número."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {},
+  "tags": []
+}
