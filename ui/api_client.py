@@ -1,6 +1,6 @@
 """Única camada da interface que se comunica com o mundo exterior: faz
-requisições HTTP para a API REST (FastAPI). Nenhuma outra parte da UI
-acessa a planilha, abre o .xlsx ou importa código de src/api — tudo passa
+requisições HTTP para a API REST do backend Node.js. Nenhuma outra parte da
+UI acessa a planilha, abre o .xlsx ou importa código do backend — tudo passa
 por aqui, usando a biblioteca `requests`.
 """
 import os
@@ -11,7 +11,7 @@ from urllib.parse import quote
 import pandas as pd
 import requests
 
-API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:8000").rstrip("/")
+API_BASE_URL = os.environ.get("API_BASE_URL", "http://localhost:3000/api").rstrip("/")
 
 
 class ApiError(Exception):
@@ -39,7 +39,7 @@ def _request(
     except requests.RequestException as erro:
         raise ApiConnectionError(
             f"Não foi possível conectar à API em {API_BASE_URL}. "
-            f"Verifique se o servidor uvicorn está em execução."
+            f"Verifique se o servidor Node da API está em execução."
         ) from erro
 
     if resp.status_code in ignore_statuses:

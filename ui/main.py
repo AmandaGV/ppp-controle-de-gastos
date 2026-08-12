@@ -1,9 +1,9 @@
 """Layout e navegação da interface Streamlit. Chamado a partir do
 launcher em app.py (ver `streamlit run app.py` na raiz do projeto).
 
-Requer a API REST em execução (uvicorn api.main:app) — a UI não lê nem
+Requer a API REST em execução no backend Node.js — a UI não lê nem
 grava a planilha diretamente, apenas consome os endpoints HTTP via
-ui/api_client.py. Por padrão aponta para http://localhost:8000; defina a
+ui/api_client.py. Por padrão aponta para http://localhost:3000/api; defina a
 variável de ambiente API_BASE_URL para apontar para outro endereço.
 """
 import streamlit as st

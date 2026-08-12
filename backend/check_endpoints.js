@@ -1,7 +1,7 @@
-async function fetchJson(path) {
+async function fetchJson(path, method = 'GET') {
   const url = `http://localhost:3000${path}`;
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { method });
     const json = await res.json();
     return json;
   } catch (err) {
@@ -12,6 +12,7 @@ async function fetchJson(path) {
 (async () => {
   const endpoints = [
     '/api/sistema/init',
+    '/api/sistema/reload',
     '/api/sistema/planilha',
     '/api/despesas/meses',
     '/api/despesas/categorias',
@@ -19,8 +20,9 @@ async function fetchJson(path) {
   ];
 
   for (const ep of endpoints) {
-    console.log('---', ep);
-    const j = await fetchJson(ep);
+    const method = ep === '/api/sistema/init' || ep === '/api/sistema/reload' ? 'POST' : 'GET';
+    console.log('---', method, ep);
+    const j = await fetchJson(ep, method);
     if (j && j.error) {
       console.error('ERROR:', j.error);
     } else if (Array.isArray(j)) {
