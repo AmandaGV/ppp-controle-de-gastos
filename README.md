@@ -43,8 +43,8 @@ data/
 ```
 
 A lógica matemática e de localização de células vive inteiramente em
-`api/services/`, sem qualquer acoplamento com Streamlit ou HTTP — por isso é
-testável isoladamente (ver `tests/`).
+`backend/src/services/`, sem qualquer acoplamento com Streamlit ou HTTP — por isso é
+testável isoladamente por meio do backend em Node.js.
 
 ## Como o sistema interage com a planilha
 
@@ -61,13 +61,13 @@ abas:
   planilha original não tinha essa lista — apenas texto livre já lançado).
 
 A cada operação, o sistema **não usa fórmulas do Excel**: ele lê os valores
-já lançados, recalcula em Python e grava o resultado diretamente nas células
+já lançados, recalcula no backend e grava o resultado diretamente nas células
 `Total das Despesas` e `Resultado Operacional` do mês afetado. Isso garante
 que a interface sempre mostre números corretos, mesmo sem abrir o arquivo no
 Excel para recalcular fórmulas.
 
 O sistema **nunca fixa números de linha/coluna no código**. Um serviço de
-layout (`api/services/layout_service.py`) varre a planilha em tempo de
+layout (`backend/src/services/layoutService.js`) varre a planilha em tempo de
 execução e localiza dinamicamente:
 
 - a coluna de cada mês/ano (a partir da linha de cabeçalho `MESES`);
@@ -96,10 +96,10 @@ colunas adicionadas), desde que os rótulos de texto sejam mantidos.
   células já lançadas na planilha de despesas (preservando os demais meios
   concatenados na mesma célula).
 
-Toda essa lógica vive na camada `api/services/` e é acionada pelas rotas via
-`api/controllers/`. A validação de formato/obrigatoriedade do payload (tipos,
-valores negativos, campos vazios) é feita pelos schemas Pydantic em
-`api/schemas/`.
+Toda essa lógica vive na camada `backend/src/services/` e é acionada pelas rotas via
+`backend/src/controllers/`. A validação de formato/obrigatoriedade do payload
+é feita diretamente nos controladores do backend e pelas regras de negócio do
+arquivo Excel.
 
 > **Observação sobre a planilha original**: na aba "Pessoa Física", a
 > categoria "SERVIÇOS FINANCEIROS" tem duas linhas com o rótulo
@@ -165,14 +165,13 @@ estático (ex.: `npx serve frontend`). A interface consome a API em
 - `API_BASE_URL` (lida pela **UI**): endereço base da API. Por padrão
   `http://localhost:3000/api`.
 
-## Como rodar os testes
+## Como rodar a API
 
 ```bash
-pytest
+cd backend
+npm install
+npm start
 ```
 
-Os testes copiam a planilha para um diretório temporário antes de cada
-execução — o arquivo em `data/` nunca é alterado pelos testes. Isso inclui
-tanto os testes de `api/services/` quanto os testes de fumaça da API
-(`tests/test_api.py`, via `fastapi.testclient.TestClient`, sem precisar do
-uvicorn em execução).
+A API estará disponível em `http://localhost:3000/api` e a documentação do
+Swagger em `http://localhost:3000/api/docs`.

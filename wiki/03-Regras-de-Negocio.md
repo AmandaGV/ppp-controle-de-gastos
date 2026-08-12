@@ -2,9 +2,9 @@
 
 ## Despesas
 
-- **Cadastro de despesa**: o valor enviado em `POST /despesas` é somado ao valor já existente na célula correspondente ao mês e subcategoria.
-- **Atualização de despesa**: `PUT /despesas` substitui o valor existente na célula por `novo_valor`.
-- **Exclusão de despesa**: `DELETE /despesas` zera o valor e remove o meio de pagamento registrado para a célula.
+- **Cadastro de despesa**: o valor enviado em `POST /api/despesas` é somado ao valor já existente na célula correspondente ao mês e subcategoria.
+- **Atualização de despesa**: `PUT /api/despesas` substitui o valor existente na célula por `novo_valor`.
+- **Exclusão de despesa**: `DELETE /api/despesas` zera o valor e remove o meio de pagamento registrado para a célula.
 - **Meios de pagamento**: o cadastro e alteração de meios de pagamento atualiza apenas o catálogo de `Meios de Pagamento` e, no caso de renomeação, propaga o novo nome para todas as células que já tinham o meio antigo.
 
 ## Renda e resultado operacional
@@ -31,7 +31,7 @@
 
 ## Validação de entrada
 
-- Os schemas Pydantic (`api/schemas`) garantem:
+- A API em Node valida os campos recebidos dentro dos controladores e serviços, garantindo que:
   - `valor` deve ser maior que zero no cadastro.
   - `novo_valor` deve ser maior ou igual a zero na atualização.
   - `meio_pagamento`, `categoria` e `subcategoria` não podem ser strings vazias.
