@@ -2,8 +2,8 @@
 
 ## Despesas
 
-- **Cadastro de despesa**: o valor enviado em `POST /api/despesas` é somado ao valor já existente na célula correspondente ao mês e subcategoria.
-- **Atualização de despesa**: `PUT /api/despesas` substitui o valor existente na célula por `novo_valor`.
+- **Cadastro de despesa**: o `value` enviado em `POST /api/despesas` é somado ao valor já existente na célula correspondente ao mês e subcategoria.
+- **Atualização de despesa**: `PUT /api/despesas` substitui o valor existente na célula pelo `value` enviado no payload.
 - **Exclusão de despesa**: `DELETE /api/despesas` zera o valor e remove o meio de pagamento registrado para a célula.
 - **Meios de pagamento**: o cadastro e alteração de meios de pagamento atualiza apenas o catálogo de `Meios de Pagamento` e, no caso de renomeação, propaga o novo nome para todas as células que já tinham o meio antigo.
 
@@ -31,10 +31,12 @@
 
 ## Validação de entrada
 
-- A API em Node valida os campos recebidos dentro dos controladores e serviços, garantindo que:
-  - `valor` deve ser maior que zero no cadastro.
-  - `novo_valor` deve ser maior ou igual a zero na atualização.
-  - `meio_pagamento`, `categoria` e `subcategoria` não podem ser strings vazias.
+- A API não usa uma camada de schema/validação (como Pydantic na antiga API Python). A validação é implícita e ocorre nos serviços:
+  - `category`/`subcategory`/`year`/`month` precisam corresponder a uma linha e a um mês existentes na planilha; caso contrário o serviço lança um erro (`Classe não encontrada...`, `Não foi possível localizar as colunas...`).
+  - Ao cadastrar um meio de pagamento, `name` vazio ou já existente no catálogo gera erro.
+  - Ao renomear/excluir um meio de pagamento, `name` inexistente no catálogo gera erro.
+  - Não há validação explícita de `value` negativo nem de campos de despesa vazios — o valor é convertido com `Number(value)` e gravado como está.
+- Todo erro lançado nos serviços de despesas, renda e meios de pagamento é capturado pelos controladores e respondido como `400 Bad Request` com `{ "message": "..." }`. Os endpoints de sistema (`/api/sistema/*`) respondem erros como `500 Internal Server Error`.
 
 ## Observações importantes
 

@@ -25,41 +25,52 @@ A documentação interativa Swagger fica disponível em:
   - Lista meses/anos disponíveis.
 - `GET /api/despesas`
   - Busca o valor agregado de uma despesa.
-  - Parâmetros obrigatórios: `categoria`, `subcategoria`, `ano`, `mes`.
+  - Parâmetros de query: `category`, `subcategory`, `year`, `month`.
 - `POST /api/despesas`
   - Cadastra uma despesa e soma ao valor existente.
-  - Payload: `valor`, `data`, `categoria`, `subcategoria`, `meio_pagamento`.
+  - Payload: `category`, `subcategory`, `year`, `month`, `value`, `paymentMethod` (opcional).
 - `PUT /api/despesas`
   - Atualiza o valor de uma célula (substitui o valor atual).
-  - Parâmetros obrigatórios: `categoria`, `subcategoria`, `ano`, `mes`.
+  - Parâmetros de query: `category`, `subcategory`, `year`, `month`.
+  - Payload: `value`, `paymentMethod` (opcional).
 - `DELETE /api/despesas`
   - Exclui (zera) uma despesa.
-  - Parâmetros obrigatórios: `categoria`, `subcategoria`, `ano`, `mes`.
+  - Parâmetros de query: `category`, `subcategory`, `year`, `month`.
 
 ### Meios de Pagamento
 
 - `GET /api/meios-pagamento`
   - Lista todos os meios de pagamento do catálogo.
-- `GET /api/meios-pagamento/{nome}`
-  - Busca um meio de pagamento pelo nome.
 - `POST /api/meios-pagamento`
   - Cadastra um novo meio de pagamento.
-- `PUT /api/meios-pagamento/{nome_atual}`
+  - Payload: `name`.
+- `PUT /api/meios-pagamento/{name}`
   - Renomeia um meio de pagamento e propaga a alteração nas células de despesas.
-- `DELETE /api/meios-pagamento/{nome}`
+  - Payload: `newName`.
+- `DELETE /api/meios-pagamento/{name}`
   - Exclui um meio de pagamento do catálogo.
+
+Não existe um `GET /api/meios-pagamento/{name}` para buscar um único item
+pelo nome — a única forma de consulta é a listagem completa.
 
 ### Renda Mensal
 
 - `GET /api/renda`
-  - Retorna `renda_mensal`, `total_despesas` e `resultado_operacional` para o mês.
+  - Parâmetros de query: `year`, `month`.
+  - Retorna `rendaMensal`, `totalDespesas` e `resultadoOperacional` para o mês.
 - `PUT /api/renda`
+  - Parâmetros de query: `year`, `month`.
+  - Payload: `rendaMensal`.
   - Atualiza a renda mensal de um mês.
 
 ### Sistema
 
+- `POST /api/sistema/init`
+  - Inicializa/recarrega o workbook e retorna o caminho do arquivo `.xlsx` em uso.
 - `POST /api/sistema/reload`
   - Recarrega o arquivo Excel do disco, descartando cache de workbook/layout.
+- `GET /api/sistema/planilha`
+  - Retorna uma visão consolidada da planilha (meses, meios de pagamento e todas as linhas/células) para telas como "Planilha Completa".
 
 ## Swagger / OpenAPI
 
@@ -67,5 +78,5 @@ A API Node.js gera a documentação Swagger automaticamente em `/api/docs` usand
 
 ## Observações
 
-- A implementação ativa do repositório é a API do diretório `backend/`.
-- O projeto ainda pode incluir interfaces opcionais em Python, mas a API oficial e documentada é a Node.js.
+- A implementação ativa do repositório é a API do diretório `backend/`. A antiga API em Python (FastAPI) foi removida.
+- O projeto inclui duas interfaces que consomem essa mesma API: `frontend/` (HTML/Vanilla JS) e `app.py` + `ui/` (Streamlit). Nenhuma delas acessa a planilha diretamente.

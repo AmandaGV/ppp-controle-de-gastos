@@ -1,85 +1,109 @@
 # Casos de Teste da API
 
+> Os exemplos abaixo usam os nomes de campo reais expostos pela API Node.js
+> (`backend/`) — em inglês (`category`, `subcategory`, `year`, `month`,
+> `value`, `paymentMethod`, `rendaMensal`) — e os status codes que os
+> controladores (`backend/src/controllers/`) realmente retornam. A API não
+> usa `404`/`422`/`204`: praticamente todo erro de negócio é respondido como
+> `400` com `{ "message": "..." }`, e as escritas bem-sucedidas retornam
+> `200` (ou `201` para criação) com o objeto atualizado.
+
 ## Lista de casos de teste
 
 ### 1. Listar categorias
 
 - **Objetivo**: verificar se o endpoint retorna as categorias existentes.
-- **Método/Rota**: `GET /despesas/categorias`
-- **Resultado esperado**: status `200` e lista de strings com categorias.
+- **Método/Rota**: `GET /api/despesas/categorias`
+- **Resultado esperado**: status `200` e array de strings com categorias (ex.: `"ALIMENTAÇÃO"`, `"MORADIA"`).
 
 ### 2. Listar subcategorias de categoria existente
 
 - **Objetivo**: retornar subcategorias válidas para uma categoria existente.
-- **Método/Rota**: `GET /despesas/categorias/{categoria}/subcategorias`
+- **Método/Rota**: `GET /api/despesas/categorias/{categoria}/subcategorias`
 - **Parâmetros**: `categoria=ALIMENTAÇÃO`
-- **Resultado esperado**: status `200` e lista de subcategorias.
+- **Resultado esperado**: status `200` e array de strings (ex.: `"Supermercado"`, `"Feira / Sacolão"`, `"Padaria"`).
 
 ### 3. Buscar meses disponíveis
 
 - **Objetivo**: listar os meses/anos presentes na planilha.
-- **Método/Rota**: `GET /despesas/meses`
-- **Resultado esperado**: status `200` e array de strings `MM/YYYY`.
+- **Método/Rota**: `GET /api/despesas/meses`
+- **Resultado esperado**: status `200` e array de objetos `{ label, year, month, valueColumn, paymentColumn }`.
 
 ### 4. Cadastrar despesa válida
 
-- **Objetivo**: adicionar valor a uma célula de despesa.
-- **Método/Rota**: `POST /despesas`
+- **Objetivo**: somar um valor a uma célula de despesa existente.
+- **Método/Rota**: `POST /api/despesas`
 - **Payload**:
-  - `valor`: `100.0`
-  - `data`: `2026-06-15`
-  - `categoria`: `ALIMENTAÇÃO`
-  - `subcategoria`: `Supermercado`
-  - `meio_pagamento`: `Pix`
-- **Resultado esperado**: status `201` e objeto com a despesa cadastrada.
+  ```json
+  {
+    "category": "ALIMENTAÇÃO",
+    "subcategory": "Supermercado",
+    "year": 2025,
+    "month": 4,
+    "value": 100.0,
+    "paymentMethod": "Pix"
+  }
+  ```
+- **Resultado esperado**: status `201` e objeto `{ year, month, category, subcategory, value, paymentMethod }` com o valor já somado ao existente.
 
 ### 5. Buscar despesa cadastrada
 
 - **Objetivo**: verificar que a despesa cadastrada está disponível.
-- **Método/Rota**: `GET /despesas` com params `categoria`, `subcategoria`, `ano`, `mes`
-- **Resultado esperado**: status `200` e valor igual ao cadastrado.
+- **Método/Rota**: `GET /api/despesas` com query `category`, `subcategory`, `year`, `month`.
+- **Resultado esperado**: status `200` e `value` igual ao total acumulado na célula.
 
-### 6. Excluir despesa
+### 6. Atualizar despesa (substituição de valor)
+
+- **Objetivo**: confirmar que `PUT` substitui o valor em vez de somar.
+- **Método/Rota**: `PUT /api/despesas` com query `category`, `subcategory`, `year`, `month` e payload `{ "value": 50.0, "paymentMethod": "Dinheiro" }`.
+- **Resultado esperado**: status `200` e `value` igual a `50.0` (não somado ao valor anterior).
+
+### 7. Excluir despesa
 
 - **Objetivo**: zerar a célula da despesa cadastrada.
-- **Método/Rota**: `DELETE /despesas` com mesmos parâmetros da busca.
-- **Resultado esperado**: status `204` e valor `0` ao buscar novamente.
+- **Método/Rota**: `DELETE /api/despesas` com os mesmos parâmetros de query da busca.
+- **Resultado esperado**: status `200` e `{ "message": "Despesa removida com sucesso." }`; uma nova consulta (`GET`) deve retornar `value: 0` e `paymentMethod: null`.
 
-### 7. Cadastrar despesa inválida
+### 8. Cadastrar despesa com categoria/subcategoria/mês inexistente
 
-- **Objetivo**: garantir validação de payload.
-- **Método/Rota**: `POST /despesas`
-- **Payload**: `valor=-10.0` e demais campos válidos.
-- **Resultado esperado**: status `422`.
+- **Objetivo**: garantir que a API responde com erro quando a célula não pode ser localizada na planilha.
+- **Método/Rota**: `POST /api/despesas` com `category`/`subcategory` que não existem na planilha, ou `year`/`month` fora do range de colunas.
+- **Resultado esperado**: status `400` e `{ "message": "Classe não encontrada..." }` ou `{ "message": "Não foi possível localizar as colunas..." }`.
 
-### 8. CRUD de meios de pagamento
+> **Observação**: a API atual **não valida** `value` negativo — um `POST`/`PUT` com `value: -10` é aceito normalmente (o valor é apenas somado/gravado). Não existe um caso de teste de "payload inválido por valor negativo" porque esse cenário não é rejeitado pela implementação hoje.
 
-- **Objetivo**: testar criação, busca e exclusão de meio de pagamento.
+### 9. CRUD de meios de pagamento
+
+- **Objetivo**: testar criação, listagem, renomeação e exclusão de um meio de pagamento.
 - **Sequência**:
-  1. `POST /meios-pagamento` com `nome`: `Vale Alimentação`.
-  2. `GET /meios-pagamento/Vale Alimentação`.
-  3. `DELETE /meios-pagamento/Vale Alimentação`.
-  4. `GET /meios-pagamento/Vale Alimentação` retorna `404`.
-- **Resultado esperado**: `201`, `200`, `204`, `404`.
+  1. `POST /api/meios-pagamento` com `{ "name": "Vale Alimentação" }` → `201`.
+  2. `GET /api/meios-pagamento` → `200`, lista contém `{ "name": "Vale Alimentação" }`.
+  3. `PUT /api/meios-pagamento/Vale Alimentação` com `{ "newName": "VA" }` → `200`, `{ "name": "VA" }`.
+  4. `DELETE /api/meios-pagamento/VA` → `200`, `{ "message": "Meio de pagamento excluído com sucesso." }`.
+  5. `GET /api/meios-pagamento` → `200`, lista não contém mais `"VA"`.
+- **Resultado esperado**: `201`, `200`, `200`, `200`, `200`. Não existe endpoint `GET /api/meios-pagamento/{nome}` para buscar um único item — por isso a verificação de existência é feita pela listagem completa.
+- **Caso de erro**: repetir o passo 3/4 para um nome que não existe no catálogo retorna `400` com `{ "message": "Meio de pagamento não encontrado." }` (não `404`).
 
-### 9. Atualizar renda mensal e resultado operacional
+### 10. Atualizar renda mensal e resultado operacional
 
 - **Objetivo**: verificar cálculo correto de resultado operacional.
-- **Método/Rota**: `PUT /renda` com params `ano`, `mes` e payload `valor=1000.0`.
-- **Resultado esperado**: `200` e campo `renda_mensal` igual a `1000.0`.
-- **Validação adicional**: após cadastro de despesa de `300.0`, `GET /renda` deve retornar `total_despesas=300.0` e `resultado_operacional=700.0`.
+- **Método/Rota**: `PUT /api/renda` com query `year`, `month` e payload `{ "rendaMensal": 1000.0 }`.
+- **Resultado esperado**: status `200` e `rendaMensal` igual a `1000.0` na resposta.
+- **Validação adicional**: após cadastro de despesa de `300.0` no mesmo mês, `GET /api/renda?year=&month=` deve retornar `totalDespesas: 300.0` e `resultadoOperacional: 700.0`.
 
-### 10. Recarregar planilha do disco
+### 11. Operações de sistema
 
-- **Objetivo**: testar endpoint de sistema que limpa cache.
-- **Método/Rota**: `POST /sistema/reload`
-- **Resultado esperado**: status `200` e objeto `{"status": "ok"}`.
+- **Objetivo**: validar os endpoints administrativos.
+- **Sequência**:
+  1. `POST /api/sistema/init` → `200`, `{ "message": "Workbook inicializado com sucesso.", "path": "..." }`.
+  2. `POST /api/sistema/reload` → `200`, `{ "message": "Workbook recarregado com sucesso." }`.
+  3. `GET /api/sistema/planilha` → `200`, objeto com `sheetName`, `rowCount`, `columnCount`, `months`, `paymentMethods`, `rows`.
 
 ## Observações
 
-- Todos os casos de teste devem ser executados com uma cópia temporária da planilha.
+- Todos os casos de teste devem ser executados com uma cópia temporária da planilha (apontada via `PLANILHA_CONTROLE_GASTOS_PATH`).
 - O arquivo original `data/PLANILHA CONTROLE DE GASTOS.xlsx` não deve ser alterado.
-- Casos adicionais recomendados:
-  - tentativa de cadastrar meio de pagamento vazio.
-  - tentativa de atualizar despesa em categoria/subcategoria inexistente.
-  - tentativa de buscar despesa com parâmetros incompletos.
+- Casos adicionais recomendados, ainda não cobertos por automação:
+  - tentativa de cadastrar meio de pagamento com `name` vazio ou duplicado (`400`);
+  - tentativa de renomear/excluir um meio de pagamento inexistente (`400`);
+  - tentativa de buscar/atualizar/excluir despesa com query params ausentes (o comportamento depende de `Number(undefined)` gerar `NaN` e a busca de coluna/linha falhar com `400`).
