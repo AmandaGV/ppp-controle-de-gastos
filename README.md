@@ -116,7 +116,8 @@ valores negativos, campos vazios) é feita pelos schemas Pydantic em
 | GET | `/despesas/categorias` | Lista categorias disponíveis |
 | GET | `/despesas/categorias/{categoria}/subcategorias` | Lista subcategorias de uma categoria |
 | GET | `/despesas/meses` | Lista meses/anos disponíveis na planilha |
-| GET | `/despesas/planilha` | Visão consolidada (todas as células) para a tela "Planilha Completa" |
+| POST | `/sistema/init` | Inicializa ou recria a planilha de controle no disco |
+| GET | `/sistema/planilha` | Visão consolidada (todas as células) para a tela "Planilha Completa" |
 | GET | `/despesas?categoria=&subcategoria=&ano=&mes=` | Busca o valor agregado de uma célula |
 | POST | `/despesas` | Cadastra despesa (soma ao valor existente) |
 | PUT | `/despesas?categoria=&subcategoria=&ano=&mes=` | Atualiza (substitui) o valor de uma célula |
@@ -131,7 +132,7 @@ valores negativos, campos vazios) é feita pelos schemas Pydantic em
 | POST | `/sistema/reload` | Descarta o cache de workbook/layout e recarrega a planilha do disco |
 
 A documentação completa e interativa (Swagger) fica disponível em
-`http://localhost:8000/docs` com a API em execução.
+`http://localhost:3000/api/docs` com a API em execução.
 
 ## Requisitos e execução
 
@@ -162,7 +163,7 @@ estático (ex.: `npx serve frontend`). A interface consome a API em
   para o arquivo `.xlsx`. Por padrão usa `data/PLANILHA CONTROLE DE
   GASTOS.xlsx`.
 - `API_BASE_URL` (lida pela **UI**): endereço base da API. Por padrão
-  `http://localhost:8000`.
+  `http://localhost:3000/api`.
 
 ## Como rodar os testes
 
