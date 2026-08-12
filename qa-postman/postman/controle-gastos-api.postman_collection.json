@@ -1,0 +1,643 @@
+{
+  "info": {
+    "name": "Controle de Gastos - API",
+    "_postman_id": "b1e2f3a4-0001-4a2b-9c3d-controlegastos01",
+    "description": "Coleção de testes funcionais da API de Controle de Gastos Pessoais (Node/Express). Base: {{base_url}}. Sem autenticação. Gerada a partir do código-fonte em backend/src (routes/controllers/services).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000/api", "type": "string" },
+    { "key": "test_category", "value": "MORADIA", "type": "string" },
+    { "key": "test_subcategory", "value": "Aluguel", "type": "string" },
+    { "key": "test_year", "value": "2026", "type": "string" },
+    { "key": "test_month", "value": "8", "type": "string" },
+    { "key": "test_payment_method", "value": "Pix Teste QA", "type": "string" },
+    { "key": "test_payment_method_renamed", "value": "Pix Teste QA Renomeado", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Sistema",
+      "item": [
+        {
+          "name": "POST /sistema/reload - recarrega workbook do disco",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{base_url}}/sistema/reload", "host": ["{{base_url}}"], "path": ["sistema", "reload"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Mensagem de confirmação', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.message).to.eql('Workbook recarregado com sucesso.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /sistema/init - inicializa/recria a planilha",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": { "raw": "{{base_url}}/sistema/init", "host": ["{{base_url}}"], "path": ["sistema", "init"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Retorna message e path', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('message');",
+                  "  pm.expect(body).to.have.property('path');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /sistema/planilha - visão consolidada",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/sistema/planilha", "host": ["{{base_url}}"], "path": ["sistema", "planilha"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Estrutura contém sheetName, months, paymentMethods, rows', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('sheetName');",
+                  "  pm.expect(body).to.have.property('months').that.is.an('array');",
+                  "  pm.expect(body).to.have.property('paymentMethods').that.is.an('array');",
+                  "  pm.expect(body).to.have.property('rows').that.is.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Meios de Pagamento",
+      "item": [
+        {
+          "name": "GET /meios-pagamento - lista todos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/meios-pagamento", "host": ["{{base_url}}"], "path": ["meios-pagamento"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Resposta é um array de {name}', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('array');",
+                  "  if (body.length) pm.expect(body[0]).to.have.property('name');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /meios-pagamento - cadastra novo (positivo)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"{{test_payment_method}}\"\n}" },
+            "url": { "raw": "{{base_url}}/meios-pagamento", "host": ["{{base_url}}"], "path": ["meios-pagamento"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Retorna o name cadastrado', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.name).to.eql(pm.variables.get('test_payment_method'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /meios-pagamento - duplicado (negativo)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"name\": \"{{test_payment_method}}\"\n}" },
+            "url": { "raw": "{{base_url}}/meios-pagamento", "host": ["{{base_url}}"], "path": ["meios-pagamento"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Mensagem de duplicidade', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.message).to.eql('Meio de pagamento já existe.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /meios-pagamento - nome ausente (negativo)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{}" },
+            "url": { "raw": "{{base_url}}/meios-pagamento", "host": ["{{base_url}}"], "path": ["meios-pagamento"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Mensagem de campo obrigatório', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.message).to.eql('Nome do meio de pagamento é obrigatório.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT /meios-pagamento/{name} - renomeia (positivo)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"newName\": \"{{test_payment_method_renamed}}\"\n}" },
+            "url": {
+              "raw": "{{base_url}}/meios-pagamento/{{test_payment_method}}",
+              "host": ["{{base_url}}"],
+              "path": ["meios-pagamento", "{{test_payment_method}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Retorna novo nome', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.name).to.eql(pm.variables.get('test_payment_method_renamed'));",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT /meios-pagamento/{name} - inexistente (negativo)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"newName\": \"Nao Importa\"\n}" },
+            "url": {
+              "raw": "{{base_url}}/meios-pagamento/Meio-Inexistente-QA",
+              "host": ["{{base_url}}"],
+              "path": ["meios-pagamento", "Meio-Inexistente-QA"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400 (nota: Swagger documenta 404, código real retorna 400)', () => pm.response.to.have.status(400));",
+                  "pm.test('Mensagem de não encontrado', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.message).to.eql('Meio de pagamento não encontrado.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /meios-pagamento/{name} - inexistente (negativo)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/meios-pagamento/Meio-Inexistente-QA",
+              "host": ["{{base_url}}"],
+              "path": ["meios-pagamento", "Meio-Inexistente-QA"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Mensagem de não encontrado', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.message).to.eql('Meio de pagamento não encontrado.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /meios-pagamento/{name} - exclui (positivo)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/meios-pagamento/{{test_payment_method_renamed}}",
+              "host": ["{{base_url}}"],
+              "path": ["meios-pagamento", "{{test_payment_method_renamed}}"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Mensagem de sucesso', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.message).to.eql('Meio de pagamento excluído com sucesso.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Despesas",
+      "item": [
+        {
+          "name": "GET /despesas/categorias",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/despesas/categorias", "host": ["{{base_url}}"], "path": ["despesas", "categorias"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Resposta é array de strings', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /despesas/categorias/{categoria}/subcategorias",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/despesas/categorias/{{test_category}}/subcategorias",
+              "host": ["{{base_url}}"],
+              "path": ["despesas", "categorias", "{{test_category}}", "subcategorias"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Resposta é array de strings', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /despesas/meses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/despesas/meses", "host": ["{{base_url}}"], "path": ["despesas", "meses"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Resposta é array de strings', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.be.an('array');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /despesas - cadastra despesa (soma valor)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"{{test_category}}\",\n  \"subcategory\": \"{{test_subcategory}}\",\n  \"year\": {{test_year}},\n  \"month\": {{test_month}},\n  \"value\": 150.50,\n  \"paymentMethod\": \"Pix\"\n}"
+            },
+            "url": { "raw": "{{base_url}}/despesas", "host": ["{{base_url}}"], "path": ["despesas"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Retorna a despesa com paymentMethod contendo Pix', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('value');",
+                  "  pm.expect(body.paymentMethod).to.include('Pix');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /despesas - consulta despesa cadastrada",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/despesas?category={{test_category}}&subcategory={{test_subcategory}}&year={{test_year}}&month={{test_month}}",
+              "host": ["{{base_url}}"],
+              "path": ["despesas"],
+              "query": [
+                { "key": "category", "value": "{{test_category}}" },
+                { "key": "subcategory", "value": "{{test_subcategory}}" },
+                { "key": "year", "value": "{{test_year}}" },
+                { "key": "month", "value": "{{test_month}}" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('value é numérico', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.value).to.be.a('number');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST /despesas - categoria inexistente (negativo)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"Categoria-Inexistente-QA\",\n  \"subcategory\": \"Sub-Inexistente-QA\",\n  \"year\": {{test_year}},\n  \"month\": {{test_month}},\n  \"value\": 10\n}"
+            },
+            "url": { "raw": "{{base_url}}/despesas", "host": ["{{base_url}}"], "path": ["despesas"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Mensagem indica classe não encontrada', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.message).to.include('Classe não encontrada');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT /despesas - atualiza (substitui valor)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"category\": \"{{test_category}}\",\n  \"subcategory\": \"{{test_subcategory}}\",\n  \"year\": {{test_year}},\n  \"month\": {{test_month}},\n  \"value\": 999.99\n}"
+            },
+            "url": { "raw": "{{base_url}}/despesas", "host": ["{{base_url}}"], "path": ["despesas"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('value foi substituído para 999.99', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.value).to.eql(999.99);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "DELETE /despesas - remove (zera valor)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/despesas?category={{test_category}}&subcategory={{test_subcategory}}&year={{test_year}}&month={{test_month}}",
+              "host": ["{{base_url}}"],
+              "path": ["despesas"],
+              "query": [
+                { "key": "category", "value": "{{test_category}}" },
+                { "key": "subcategory", "value": "{{test_subcategory}}" },
+                { "key": "year", "value": "{{test_year}}" },
+                { "key": "month", "value": "{{test_month}}" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Mensagem de sucesso', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.message).to.eql('Despesa removida com sucesso.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET /despesas - mês/ano inexistente (negativo)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/despesas?category={{test_category}}&subcategory={{test_subcategory}}&year=1999&month=1",
+              "host": ["{{base_url}}"],
+              "path": ["despesas"],
+              "query": [
+                { "key": "category", "value": "{{test_category}}" },
+                { "key": "subcategory", "value": "{{test_subcategory}}" },
+                { "key": "year", "value": "1999" },
+                { "key": "month", "value": "1" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 400', () => pm.response.to.have.status(400));",
+                  "pm.test('Mensagem indica coluna não localizada', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.message).to.include('Não foi possível localizar as colunas');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Renda",
+      "item": [
+        {
+          "name": "GET /renda",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/renda?year={{test_year}}&month={{test_month}}",
+              "host": ["{{base_url}}"],
+              "path": ["renda"],
+              "query": [
+                { "key": "year", "value": "{{test_year}}" },
+                { "key": "month", "value": "{{test_month}}" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Campos numéricos presentes', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body).to.have.property('rendaMensal');",
+                  "  pm.expect(body).to.have.property('totalDespesas');",
+                  "  pm.expect(body).to.have.property('resultadoOperacional');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "PUT /renda - atualiza renda mensal (recalcula resultado)",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"rendaMensal\": 8000\n}" },
+            "url": {
+              "raw": "{{base_url}}/renda?year={{test_year}}&month={{test_month}}",
+              "host": ["{{base_url}}"],
+              "path": ["renda"],
+              "query": [
+                { "key": "year", "value": "{{test_year}}" },
+                { "key": "month", "value": "{{test_month}}" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 200', () => pm.response.to.have.status(200));",
+                  "pm.test('rendaMensal foi atualizada e resultadoOperacional recalculado', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.rendaMensal).to.eql(8000);",
+                  "  pm.expect(body.resultadoOperacional).to.eql(body.rendaMensal - body.totalDespesas);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rotas inexistentes",
+      "item": [
+        {
+          "name": "GET /rota-invalida - 404 catch-all",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/rota-invalida-qa", "host": ["{{base_url}}"], "path": ["rota-invalida-qa"] }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status 404', () => pm.response.to.have.status(404));",
+                  "pm.test('Mensagem padrão de endpoint não encontrado', () => {",
+                  "  const body = pm.response.json();",
+                  "  pm.expect(body.message).to.eql('Endpoint não encontrado.');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
