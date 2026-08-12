@@ -40,10 +40,18 @@ async function getConsolidatedSheet(req, res) {
 
     // read rows and map month columns to values/payment
     const rows = [];
+    let currentCategory = null;
     for (let r = 1; r <= sheet.rowCount; r += 1) {
       const row = sheet.getRow(r);
-      const category = row.getCell(1).value || null;
-      const subcategory = row.getCell(2).value || null;
+      let category = null;
+      let subcategory = null;
+      if (layout.isCategoryRow(sheet, r)) {
+        currentCategory = row.getCell(2).value || null;
+        category = currentCategory;
+      } else if (layout.isSubcategoryRow(sheet, r)) {
+        category = currentCategory;
+        subcategory = row.getCell(2).value || null;
+      }
       const cells = {};
       for (const m of months) {
         const valueCell = row.getCell(m.valueColumn).value;
