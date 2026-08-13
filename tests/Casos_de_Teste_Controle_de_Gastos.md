@@ -21,7 +21,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Baixa | |
 | **Rastreabilidade** | REQ1 | |
 | **Pré-Condições** | - A API está em execução e a planilha "PLANILHA CONTROLE DE GASTOS.xlsx" está acessível. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperado** |
 | Passo 1 | Selecionar a requisição "Despesas > GET /despesas/categorias" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Conferir o código de status HTTP da resposta | Código de status 200 |
 | Passo 3 | Conferir o corpo da resposta | Corpo é um array de strings contendo as categorias da coluna A da planilha (ex.: "MORADIA", "ALIMENTAÇÃO", "TRANSPORTE", "LAZER", "EDUCAÇÃO") |
@@ -37,7 +37,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Baixa | |
 | **Rastreabilidade** | REQ2 | |
 | **Pré-Condições** | - A categoria "MORADIA" existe na planilha, com pelo menos uma subcategoria cadastrada na coluna B. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Despesas > GET /despesas/categorias/{{test_category}}/subcategorias (test_category = MORADIA)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Conferir o código de status HTTP da resposta | Código de status 200 |
 | Passo 3 | Conferir o corpo da resposta | Corpo é um array de strings com as subcategorias associadas à categoria "MORADIA" |
@@ -53,7 +53,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Baixa | |
 | **Rastreabilidade** | REQ3 | |
 | **Pré-Condições** | - A planilha possui ao menos uma coluna de mês/ano no cabeçalho da primeira linha (formato MM/YYYY ou YYYY-MM). | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** 
 | Passo 1 | Selecionar a requisição "Despesas > GET /despesas/meses" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Conferir o código de status HTTP da resposta | Código de status 200 |
 | Passo 3 | Conferir o corpo da resposta | Corpo é um array de strings com os rótulos de mês encontrados no cabeçalho |
@@ -69,7 +69,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Alta | |
 | **Rastreabilidade** | RN1 | |
 | **Pré-Condições** | - A categoria "MORADIA" e a subcategoria "Aluguel" existem na planilha.<br>- A coluna do mês 08/2026 existe no cabeçalho.<br>- O valor atual da célula (categoria x mês) é conhecido antes do teste (ex.: 0,00). | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** 
 | Passo 1 | Selecionar a requisição "Despesas > POST /despesas - cadastra despesa (soma valor)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Preencher o body com { category: "MORADIA", subcategory: "Aluguel", year: 2026, month: 8, value: 150.50, paymentMethod: "Pix" } e enviar | Requisição enviada com o body acima |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 201 |
@@ -87,7 +87,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Média | |
 | **Rastreabilidade** | RN6 | |
 | **Pré-Condições** | - Existe uma despesa cadastrada em "MORADIA"/"Aluguel" no mês 08/2026 com o meio de pagamento "Pix" já registrado na célula. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Despesas > POST /despesas" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar POST /despesas com { category: "MORADIA", subcategory: "Aluguel", year: 2026, month: 8, value: 50, paymentMethod: "Cartão de Crédito" } | Requisição enviada |
 | Passo 3 | Conferir o corpo da resposta | paymentMethod = "Pix, Cartão de Crédito" (concatenado, sem duplicar "Pix") |
@@ -104,7 +104,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Média | |
 | **Rastreabilidade** | REQ4 | |
 | **Pré-Condições** | - A categoria "Categoria-Inexistente-QA" não existe na planilha. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Despesas > POST /despesas - categoria inexistente (negativo)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar POST /despesas com category = "Categoria-Inexistente-QA" e subcategory = "Sub-Inexistente-QA" | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 400 |
@@ -121,7 +121,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Alta | |
 | **Rastreabilidade** | REQ4 | |
 | **Pré-Condições** | - Existe uma despesa cadastrada em "MORADIA"/"Aluguel" no mês 08/2026 (ver CT04). | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Despesas > GET /despesas - consulta despesa cadastrada" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar GET /despesas?category=MORADIA&subcategory=Aluguel&year=2026&month=8 | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 200 |
@@ -138,7 +138,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Alta | |
 | **Rastreabilidade** | RN2 | |
 | **Pré-Condições** | - Existe uma despesa cadastrada em "MORADIA"/"Aluguel" no mês 08/2026 com valor diferente de 999.99. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Despesas > PUT /despesas - atualiza (substitui valor)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar PUT /despesas com { category: "MORADIA", subcategory: "Aluguel", year: 2026, month: 8, value: 999.99 } | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 200 |
@@ -155,7 +155,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Alta | |
 | **Rastreabilidade** | RN3 | |
 | **Pré-Condições** | - Existe uma despesa cadastrada em "MORADIA"/"Aluguel" no mês 08/2026 com valor e meio de pagamento preenchidos. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Despesas > DELETE /despesas - remove (zera valor)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar DELETE /despesas?category=MORADIA&subcategory=Aluguel&year=2026&month=8 | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 200 |
@@ -173,7 +173,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Média | |
 | **Rastreabilidade** | REQ4 | |
 | **Pré-Condições** | - Não existe coluna de cabeçalho para o mês 01/1999 na planilha. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Despesas > GET /despesas - mês/ano inexistente (negativo)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar GET /despesas?category=MORADIA&subcategory=Aluguel&year=1999&month=1 | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 400 |
@@ -190,7 +190,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Baixa | |
 | **Rastreabilidade** | REQ9 | |
 | **Pré-Condições** | - A aba "Meios de Pagamento" existe e possui ao menos um registro além do cabeçalho. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Meios de Pagamento > GET /meios-pagamento" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Conferir o código de status HTTP da resposta | Código de status 200 |
 | Passo 3 | Conferir o corpo da resposta | Corpo é um array de objetos no formato { name: string } |
@@ -206,7 +206,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Média | |
 | **Rastreabilidade** | REQ9 | |
 | **Pré-Condições** | - O meio de pagamento "Pix Teste QA" ainda não existe no catálogo. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Meios de Pagamento > POST /meios-pagamento - cadastra novo (positivo)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar POST /meios-pagamento com { name: "Pix Teste QA" } | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 201 |
@@ -224,7 +224,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Média | |
 | **Rastreabilidade** | RN7 | |
 | **Pré-Condições** | - O meio de pagamento "Pix Teste QA" já está cadastrado no catálogo (ver CT12). | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Meios de Pagamento > POST /meios-pagamento - duplicado (negativo)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar POST /meios-pagamento com { name: "pix teste qa" } (variação de caixa) | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 400 |
@@ -241,7 +241,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Baixa | |
 | **Rastreabilidade** | REQ9 | |
 | **Pré-Condições** | - Nenhuma (validação ocorre antes de qualquer acesso à planilha). | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Meios de Pagamento > POST /meios-pagamento - nome ausente (negativo)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar POST /meios-pagamento com body {} (sem o campo name) | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 400 |
@@ -258,7 +258,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Alta | |
 | **Rastreabilidade** | RN4 | |
 | **Pré-Condições** | - O meio de pagamento "Pix Teste QA" existe no catálogo.<br>- Ao menos uma célula de despesa referencia "Pix Teste QA" no campo de meio de pagamento. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Meios de Pagamento > PUT /meios-pagamento/{name} - renomeia (positivo)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar PUT /meios-pagamento/Pix Teste QA com { newName: "Pix Teste QA Renomeado" } | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 200 |
@@ -276,7 +276,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Média | |
 | **Rastreabilidade** | REQ9 | |
 | **Pré-Condições** | - O meio de pagamento "Meio-Inexistente-QA" não existe no catálogo nem em nenhuma célula de despesa. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Meios de Pagamento > PUT /meios-pagamento/{name} - inexistente (negativo)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar PUT /meios-pagamento/Meio-Inexistente-QA com { newName: "Nao Importa" } | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 400 (nota: a documentação Swagger descreve 404 para este cenário; o código implementado retorna 400 — ver observação em Riscos e Achados no Plano de Testes) |
@@ -293,7 +293,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Média | |
 | **Rastreabilidade** | REQ10 | |
 | **Pré-Condições** | - O meio de pagamento "Pix Teste QA Renomeado" existe no catálogo (ver CT15). | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Meios de Pagamento > DELETE /meios-pagamento/{name} - exclui (positivo)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar DELETE /meios-pagamento/Pix Teste QA Renomeado | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 200 |
@@ -311,7 +311,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Média | |
 | **Rastreabilidade** | REQ10 | |
 | **Pré-Condições** | - O meio de pagamento "Meio-Inexistente-QA" não existe no catálogo. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Abrir o Postman e selecionar o environment "Controle de Gastos - Local" | A variável {{base_url}} é carregada com http://localhost:3000/api |
 | Passo 2 | Selecionar a requisição "Meios de Pagamento > DELETE /meios-pagamento/{name} - inexistente (negativo)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 3 | Enviar DELETE /meios-pagamento/Meio-Inexistente-QA | Requisição enviada |
@@ -329,7 +329,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Alta | |
 | **Rastreabilidade** | REQ5 | |
 | **Pré-Condições** | - A coluna do mês 08/2026 existe e as linhas especiais "Renda Mensal", "Total das Despesas" e "Resultado Operacional" existem na planilha. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Renda > GET /renda" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar GET /renda?year=2026&month=8 | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 200 |
@@ -347,7 +347,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Alta | |
 | **Rastreabilidade** | RN5 | |
 | **Pré-Condições** | - A coluna do mês 08/2026 existe e o "Total das Despesas" desse mês é conhecido antes do teste. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Renda > PUT /renda - atualiza renda mensal (recalcula resultado)" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Enviar PUT /renda?year=2026&month=8 com { rendaMensal: 8000 } | Requisição enviada |
 | Passo 3 | Conferir o código de status HTTP da resposta | Código de status 200 |
@@ -365,7 +365,7 @@ A coluna "Rastreabilidade" referencia os códigos RN (Regra de Negócio) e REQ (
 | **Prioridade** | Baixa | |
 | **Rastreabilidade** | REQ11 | |
 | **Pré-Condições** | - Nenhuma. | |
-| Passos | Ação | Resultados Esperados |
+| **Passos** | **Ação** | **Resultados Esperados** |
 | Passo 1 | Selecionar a requisição "Rotas inexistentes > GET /rota-invalida - 404 catch-all" na coleção "Controle de Gastos - API" e clicar em "Send" | A requisição é enviada para a API |
 | Passo 2 | Conferir o código de status HTTP da resposta | Código de status 404 |
 | Passo 3 | Conferir a mensagem de erro | message = "Endpoint não encontrado." |
