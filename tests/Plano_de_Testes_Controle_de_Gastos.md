@@ -138,8 +138,4 @@ Os pontos abaixo foram identificados durante a preparação deste plano e devem 
 
 - Validações documentadas: a wiki do projeto (03-Regras-de-Negocio.md) descreve validações como "valor deve ser maior que zero no cadastro" e "categoria/subcategoria não podem ser vazias".
 
-- Divergência de status HTTP: o swagger-spec.json documenta 404 para "meio de pagamento não encontrado" em PUT/DELETE /meios-pagamento/{name}, mas o controller real (paymentMethodController.js) captura todos os erros e retorna 400. Os casos CT16 e CT18 validam o comportamento real (400).
-
-- DELETE /meios-pagamento/{name} não limpa referências: ao excluir um meio de pagamento do catálogo, células de despesa que ainda o referenciam não são atualizadas nem alertadas — o nome excluído permanece "órfão" nessas células (ver Pós-Condições do CT17).
-
 - POST /sistema/init não recria de fato: a implementação atual apenas chama a mesma rotina de POST /sistema/reload, não uma reinicialização/reset real da planilha, apesar do texto de resposta sugerir criação.

@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            backend/package-lock.json
+
+      - name: Install root dependencies (test suite)
+        run: npm install
+
+      - name: Install backend dependencies (API)
+        run: npm install
+        working-directory: backend
+
+      - name: Run automated test suite
+        run: npm test
+
+      - name: Start API for smoke test
+        working-directory: backend
+        run: |
+          npm start &
+          echo $! > "$RUNNER_TEMP/api.pid"
+
+      - name: Wait for API to respond
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:3000/api/despesas/categorias > /dev/null; then
+              echo "API is up"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "API did not become ready in time" >&2
+          exit 1
+
+      - name: Run smoke test (check_endpoints.js)
+        working-directory: backend
+        run: node check_endpoints.js
+
+      - name: Stop API
+        if: always()
+        run: kill "$(cat "$RUNNER_TEMP/api.pid")" || true
