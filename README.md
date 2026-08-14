@@ -49,6 +49,9 @@ ui/
   views/                        # Telas (dashboard, despesas, renda, meios de pagamento)
 data/
   PLANILHA CONTROLE DE GASTOS.xlsx
+tests/
+  support/fixture.js            # Monta a planilha de fixture e o app de teste
+  *.test.js                     # Suíte Mocha + Chai + Supertest (npm test)
 ```
 
 A lógica matemática e de localização de células vive inteiramente em
@@ -186,6 +189,22 @@ streamlit run app.py
   GASTOS.xlsx`.
 - `API_BASE_URL` (lida pela **UI**): endereço base da API. Por padrão
   `http://localhost:3000/api`.
+
+## Como rodar os testes
+
+Testes automatizados (Mocha + Chai + Supertest) ficam em `tests/`, na raiz
+do repositório — separados do `backend/`, que tem seu próprio
+`package.json`:
+
+```bash
+npm install
+npm test
+```
+
+Cada teste sobe a API em memória e grava numa planilha de fixture isolada
+(criada em uma pasta temporária), nunca em `data/PLANILHA CONTROLE DE
+GASTOS.xlsx`. Ver [wiki/04. Testes da API](wiki/04-Testes-da-API.md) para o
+que já está coberto e o que ainda depende de teste manual via Postman.
 
 ## Como rodar a API
 

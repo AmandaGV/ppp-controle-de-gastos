@@ -1,5 +1,10 @@
 # Casos de Teste da API
 
+> Os casos 1, 2, 4, 8 e 9 (parcialmente) já têm automação equivalente em
+> `tests/*.test.js` (Mocha + Chai + Supertest) — ver
+> [04. Testes da API](04-Testes-da-API.md). Os demais ainda dependem de
+> execução manual via Postman.
+
 > Os exemplos abaixo usam os nomes de campo reais expostos pela API Node.js
 > (`backend/`) — em inglês (`category`, `subcategory`, `year`, `month`,
 > `value`, `paymentMethod`, `rendaMensal`) — e os status codes que os

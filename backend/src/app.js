@@ -44,26 +44,30 @@ app.use((req, res) => {
   res.status(404).json({ message: 'Endpoint não encontrado.' });
 });
 
-const server = app.listen(port, () => {
-  console.log(`API rodando em http://localhost:${port}`);
-  console.log(`Swagger disponível em http://localhost:${port}/api/docs`);
-});
+if (require.main === module) {
+  const server = app.listen(port, () => {
+    console.log(`API rodando em http://localhost:${port}`);
+    console.log(`Swagger disponível em http://localhost:${port}/api/docs`);
+  });
 
-server.on('error', (error) => {
-  if (error.code === 'EADDRINUSE') {
-    console.error(`Erro: porta ${port} já está em uso. Pare a instância antiga ou use outra porta com PORT=xxxx.`);
-  } else {
-    console.error('Erro inesperado no servidor:', error);
-  }
-  process.exit(1);
-});
+  server.on('error', (error) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(`Erro: porta ${port} já está em uso. Pare a instância antiga ou use outra porta com PORT=xxxx.`);
+    } else {
+      console.error('Erro inesperado no servidor:', error);
+    }
+    process.exit(1);
+  });
 
-process.on('unhandledRejection', (reason) => {
-  console.error('Unhandled Rejection:', reason);
-  process.exit(1);
-});
+  process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled Rejection:', reason);
+    process.exit(1);
+  });
 
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  process.exit(1);
-});
+  process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    process.exit(1);
+  });
+}
+
+module.exports = app;
